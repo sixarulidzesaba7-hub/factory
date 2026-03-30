@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ფაქტორი — ადმინ პანელი</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #12486d;
+    --navy-dark: #0c3350;
+    --navy-light: #1a5f8a;
+    --gold: #C49A3C;
+    --gold-light: #e8d5a3;
+    --white: #ffffff;
+    --bg: #f0f4f7;
+    --bg-alt: #e3eaf0;
+    --text: #1a1a1a;
+    --text-mid: #3a3a3a;
+    --muted: #6b7280;
+    --border: rgba(18,72,109,0.12);
+    --success: #16a34a;
+    --danger: #dc2626;
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    background: var(--navy-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 1.75rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .logo-text span {
+    background: linear-gradient(90deg, #12486d 0%, #C49A3C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-sub {
+    font-size: 0.6875rem;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 0.25rem;
+  }
+
+  .sidebar-nav {
+    padding: 1.25rem 0;
+    flex: 1;
+  }
+
+  .nav-section-title {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    padding: 0.75rem 1.5rem 0.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+
+  .nav-item.active {
+    color: var(--gold);
+    border-left-color: var(--gold);
+    background: rgba(196,154,60,0.08);
+  }
+
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .sidebar-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .admin-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .admin-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--navy-dark);
+    flex-shrink: 0;
+  }
+
+  .admin-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .admin-role {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .topbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+  .btn {
+    padding: 0.5rem 1.25rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--gold); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--navy); }
+
+  .btn-danger {
+    background: var(--danger);
+    color: var(--white);
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 2rem;
+    flex: 1;
+  }
+
+  /* STATS CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 4px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .stat-icon svg { width: 20px; height: 20px; stroke: var(--navy); fill: none; stroke-width: 1.75; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* PANELS */
+  .panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+  }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .panel-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  /* ARTICLE FORM */
+  .form-body { padding: 1.5rem; }
+
+  .form-group { margin-bottom: 1.25rem; }
+
+  .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9375rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--navy);
+    background: var(--white);
+  }
+
+  .form-textarea { resize: vertical; min-height: 180px; line-height: 1.7; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* TOGGLE */
+  .form-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .toggle-sw {
+    position: relative;
+    width: 44px; height: 24px;
+  }
+
+  .toggle-sw input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-sl {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-alt);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+  }
+
+  .toggle-sl::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 2px; top: 2px;
+    background: var(--white);
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+
+  .toggle-sw input:checked + .toggle-sl { background: var(--navy); border-color: var(--navy); }
+  .toggle-sw input:checked + .toggle-sl::before { transform: translateX(20px); }
+
+  .toggle-label { font-size: 0.9375rem; color: var(--text-mid); font-weight: 500; }
+
+  /* NEWS LIST */
+  .news-list { padding: 0; }
+
+  .news-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .news-item:last-child { border-bottom: none; }
+  .news-item:hover { background: var(--bg); }
+
+  .news-cat {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-top: 0.15rem;
+    min-width: 80px;
+  }
+
+  .news-info { flex: 1; }
+
+  .news-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+  }
+
+  .news-meta {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .news-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+  .icon-btn {
+    width: 30px; height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .icon-btn svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
+  .icon-btn:hover { border-color: var(--navy); }
+  .icon-btn:hover svg { stroke: var(--navy); }
+  .icon-btn.del:hover { border-color: var(--danger); background: #fef2f2; }
+  .icon-btn.del:hover svg { stroke: var(--danger); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-featured { background: rgba(196,154,60,0.12); color: var(--gold); }
+  .badge-draft { background: var(--bg-alt); color: var(--muted); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--navy);
+    color: var(--white);
+    padding: 0.875rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-left: 4px solid var(--gold);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* VIEW SWITCHING */
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">ფა<span>ქტორი</span></div>
+    <div class="logo-sub">ადმინ პანელი</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">მთავარი</div>
+    <a class="nav-item active" onclick="switchView('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      დეშბორდი
+    </a>
+
+    <div class="nav-section-title">კონტენტი</div>
+    <a class="nav-item" onclick="switchView('new-article')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 5v14M5 12h14"/></svg>
+      ახალი სიახლე
+    </a>
+    <a class="nav-item" onclick="switchView('articles')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      სიახლეები
+    </a>
+    <a class="nav-item" onclick="switchView('categories')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h8M4 18h12"/></svg>
+      კატეგორიები
+    </a>
+
+    <div class="nav-section-title">სისტემა</div>
+    <a class="nav-item" onclick="switchView('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      პარამეტრები
+    </a>
+    <a class="nav-item" href="/" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      საიტი
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <div class="admin-avatar">ა</div>
+      <div>
+        <div class="admin-name">ადმინი</div>
+        <div class="admin-role">მთავარი რედაქტორი</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">დეშბორდი</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="switchView('new-article')">+ ახალი სიახლე</button>
+      <a href="/" target="_blank" class="btn btn-primary">საიტი →</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </div>
+          <div>
+            <div class="stat-num">24</div>
+            <div class="stat-label">სიახლე სულ</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="stat-num">1,243</div>
+            <div class="stat-label">მკითხველი დღეს</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+          </div>
+          <div>
+            <div class="stat-num">8</div>
+            <div class="stat-label">სიახლე დღეს</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="stat-num">3</div>
+            <div class="stat-label">კატეგორია</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panels-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">ბოლო სიახლეები</div>
+            <button class="btn btn-outline" onclick="switchView('articles')" style="font-size:0.8125rem; padding:0.375rem 0.875rem;">ყველა</button>
+          </div>
+          <div class="news-list">
+            <div class="news-item">
+              <div class="news-cat">პოლიტიკა</div>
+              <div class="news-info">
+                <div class="news-title">პარლამენტის სხდომაზე ოპოზიციამ სამი კანონპროექტი დაბლოკა</div>
+                <div class="news-meta"><span>ნინო კვარაცხელია</span><span>2 საათის წინ</span><span class="badge badge-featured">მთავარი</span></div>
+              </div>
+              <div class="news-actions">
+                <button class="icon-btn" onclick="switchView('new-article')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-cat">საქართველო</div>
+              <div class="news-info">
+                <div class="news-title">ეროვნული ბანკი: ინფლაცია 6.2%-მდე გაიზარდა</div>
+                <div class="news-meta"><span>გია მამულაშვილი</span><span>4 საათის წინ</span><span class="badge badge-draft">დრაფტი</span></div>
+              </div>
+              <div class="news-actions">
+                <button class="icon-btn" onclick="switchView('new-article')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-cat">მსოფლიო</div>
+              <div class="news-info">
+                <div class="news-title">ევროკავშირი საქართველოს ახალ პირობებს წამოაყენებს</div>
+                <div class="news-meta"><span>მარიამ ჯავახიშვილი</span><span>6 საათის წინ</span></div>
+              </div>
+              <div class="news-actions">
+                <button class="icon-btn" onclick="switchView('new-article')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">სწრაფი ქმედება</div>
+          </div>
+          <div style="padding:1.5rem; display:flex; flex-direction:column; gap:0.875rem;">
+            <button class="btn btn-primary" onclick="switchView('new-article')" style="justify-content:center; padding:0.875rem;">+ ახალი სიახლე</button>
+            <button class="btn btn-outline" onclick="switchView('articles')" style="justify-content:center; padding:0.875rem;">სიახლეების სია</button>
+            <button class="btn btn-outline" onclick="switchView('settings')" style="justify-content:center; padding:0.875rem;">⚙️ პარამეტრები</button>
+            <a href="/" target="_blank" class="btn btn-outline" style="justify-content:center; padding:0.875rem; text-decoration:none;">საიტის ნახვა →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW ARTICLE VIEW -->
+    <div class="view" id="view-new-article">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">ახალი სიახლე</div>
+        </div>
+        <div class="form-body">
+          <div class="form-group">
+            <label class="form-label">სათაური</label>
+            <input type="text" class="form-input" placeholder="სიახლის სათაური...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">კატეგორია</label>
+              <select class="form-select">
+                <option>პოლიტიკა</option>
+                <option>მსოფლიო</option>
+                
+                <option>საზოგადოება</option>
+                <option>სამართალი</option>
+                
+                <option>საქართველო</option><option>თექნოლოგია</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ავტორი</label>
+              <input type="text" class="form-input" placeholder="ავტორის სახელი...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">მოკლე აღწერა</label>
+            <textarea class="form-textarea" rows="3" placeholder="სიახლის მოკლე აღწერა..." style="min-height:80px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">სტატია</label>
+            <textarea class="form-textarea" placeholder="სიახლის სრული ტექსტი..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ფოტო (URL)</label>
+            <input type="text" class="form-input" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-toggle">
+              <label class="toggle-sw">
+                <input type="checkbox">
+                <span class="toggle-sl"></span>
+              </label>
+              <span class="toggle-label">მთავარი სიახლე</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="showToast('სიახლე გამოქვეყნდა! ✓')">გამოქვეყნება</button>
+          <button class="btn btn-outline" onclick="showToast('დრაფტი შენახულია')">დრაფტად შენახვა</button>
+          <button class="btn btn-outline" onclick="switchView('dashboard')">გაუქმება</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICLES VIEW -->
+    <div class="view" id="view-articles">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">ყველა სიახლე</div>
+          <button class="btn btn-primary" onclick="switchView('new-article')">+ ახალი</button>
+        </div>
+        <div class="news-list">
+          <div class="news-item">
+            <div class="news-cat">პოლიტიკა</div>
+            <div class="news-info">
+              <div class="news-title">პარლამენტის სხდომაზე ოპოზიციამ სამი კანონპროექტი დაბლოკა</div>
+              <div class="news-meta"><span>ნინო კვარაცხელია</span><span>29 მარტი</span><span class="badge badge-featured">მთავარი</span></div>
+            </div>
+            <div class="news-actions">
+              <button class="icon-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-cat">საქართველო</div>
+            <div class="news-info">
+              <div class="news-title">ეროვნული ბანკი: ინფლაცია 6.2%-მდე გაიზარდა</div>
+              <div class="news-meta"><span>გია მამულაშვილი</span><span>28 მარტი</span><span class="badge badge-draft">დრაფტი</span></div>
+            </div>
+            <div class="news-actions">
+              <button class="icon-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-cat">მსოფლიო</div>
+            <div class="news-info">
+              <div class="news-title">ევროკავშირი საქართველოს ახალ პირობებს წამოაყენებს</div>
+              <div class="news-meta"><span>მარიამ ჯავახიშვილი</span><span>27 მარტი</span></div>
+            </div>
+            <div class="news-actions">
+              <button class="icon-btn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="icon-btn del" onclick="confirmDelete()"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES VIEW -->
+    <div class="view" id="view-categories">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">კატეგორიები</div>
+        </div>
+        <div style="padding:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem;">
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">8</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">პოლიტიკა</div>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">5</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">მსოფლიო</div>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">4</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">საქართველო</div>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">3</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">საზოგადოება</div>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">2</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">სამართალი</div>
+            </div>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1rem; text-align:center;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--navy);">2</div>
+              <div style="font-size:0.875rem; color:var(--muted); margin-top:0.25rem;">თექნოლოგია</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">პარამეტრები</div>
+        </div>
+        <div class="form-body">
+          <div class="form-group">
+            <label class="form-label">საიტის სახელი</label>
+            <input type="text" class="form-input" value="ფაქტორი">
+          </div>
+          <div class="form-group">
+            <label class="form-label">სლოგანი</label>
+            <input type="text" class="form-input" value="დამოუკიდებელი სიახლეები">
+          </div>
+          <div class="form-group">
+            <label class="form-label">საკონტაქტო ელფოსტა</label>
+            <input type="email" class="form-input" value="info@faktori.ge">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ტელეფონი</label>
+            <input type="text" class="form-input" value="+995 32 200 00 00">
+          </div>
+          <div class="form-group">
+            <label class="form-toggle">
+              <label class="toggle-sw">
+                <input type="checkbox" checked>
+                <span class="toggle-sl"></span>
+              </label>
+              <span class="toggle-label">კომენტარები ჩართული</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="showToast('პარამეტრები შენახულია ✓')">შენახვა</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  function switchView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+
+    const titles = {
+      'dashboard': 'დეშბორდი',
+      'new-article': 'ახალი სიახლე',
+      'articles': 'სიახლეები',
+      'categories': 'კატეგორიები',
+      'settings': 'პარამეტრები'
+    };
+    document.getElementById('page-title').textContent = titles[name] || name;
+
+    const navMap = {
+      'dashboard': 0, 'new-article': 1, 'articles': 2, 'categories': 3, 'settings': 4
+    };
+    const items = document.querySelectorAll('.nav-item');
+    if (items[navMap[name]]) items[navMap[name]].classList.add('active');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function confirmDelete() {
+    if (confirm('სიახლე წაიშლება. დარწმუნებული ხარ?')) {
+      showToast('სიახლე წაიშალა');
+    }
+  }
+</script>
+</body>
+</html>
