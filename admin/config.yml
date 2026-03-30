@@ -1,0 +1,22 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "news"
+    label: "სიახლეები"
+    folder: "content/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "სათაური", name: "title", widget: "string" }
+      - { label: "კატეგორია", name: "category", widget: "select", options: ["პოლიტიკა", "მსოფლიო", "ეკონომიკა", "საზოგადოება", "სასამართლო", "თავდაცვა", "ანალიზი"] }
+      - { label: "ავტორი", name: "author", widget: "string" }
+      - { label: "მოკლე აღწერა", name: "description", widget: "text" }
+      - { label: "ფოტო", name: "image", widget: "image", required: false }
+      - { label: "მთავარი სიახლეა?", name: "featured", widget: "boolean", default: false }
+      - { label: "სტატია", name: "body", widget: "markdown" }
+      - { label: "თარიღი", name: "date", widget: "datetime" }
